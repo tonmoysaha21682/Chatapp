@@ -3,6 +3,8 @@ import { RiEyeCloseFill } from 'react-icons/ri'
 import { RiEyeFill } from 'react-icons/ri'
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Registrationa = () => {
     const [email, setEmail] = useState();
@@ -29,6 +31,7 @@ const Registrationa = () => {
     const [passworderr, setPassworderr] = useState();
 
     const [passwordshow, setPasswordshow] = useState(false);
+    const navigate = useNavigate();
 
 
 
@@ -67,6 +70,10 @@ const Registrationa = () => {
                       setEmail('');
                       setName('');
                       setPassword('');
+                      setTimeout(() => {
+                          navigate('/login')
+                      }, 3000);
+                      
                     });
 
 
@@ -134,7 +141,7 @@ const Registrationa = () => {
                             Sign up
                         </button>
                         <div>
-                            <p className='font-sans text-[#03014C] text-sm text-center mt-[15px] md:mr-[132px]  md:mt-[35px]'>Already  have an account ? <span className='text-[#EA6C00] font-semibold'>Sign In</span></p>
+                            <p className='font-sans text-[#03014C] text-sm text-center mt-[15px] md:mr-[132px]  md:mt-[35px]'>Already  have an account ? <Link to='/login' className='text-[#EA6C00] font-semibold'>Sign In</Link></p>
                         </div>
                     </div>
                 </div>

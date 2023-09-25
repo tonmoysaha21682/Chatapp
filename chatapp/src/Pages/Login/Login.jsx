@@ -2,16 +2,22 @@ import React, { useState } from 'react'
 import { RiEyeCloseFill } from 'react-icons/ri'
 import { RiEyeFill } from 'react-icons/ri'
 import { FcGoogle } from 'react-icons/fc'
+import { Link } from 'react-router-dom'
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { ToastContainer, toast } from 'react-toastify'
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
+    const navigate = useNavigate();
 
     const handleEmail = (e) => {
         setEmail(e.target.value);
         setEmailerr('');
     }
- 
+
     const handlePassword = (e) => {
         setPassword(e.target.value);
         setPassworderr('');
@@ -22,6 +28,22 @@ const Login = () => {
     const [passworderr, setPassworderr] = useState();
 
     const [passwordshow, setPasswordshow] = useState(false);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+
+    const handleGgl = () => {
+        signInWithPopup(auth, provider)
+            .then((result) => {
+               setTimeout(() => {
+                navigate('/');
+               }, 3000);
+            }).catch((error) => {
+              
+                const errorCode = error.code;
+              
+            });
+
+    }
 
 
 
@@ -34,35 +56,54 @@ const Login = () => {
                 setEmailerr('Please enter a valid mail address');
             }
         }
-        if (!name) {
-            setNameerr(' Enter your full name');
-        }
+
         if (!password) {
             setPassworderr('Enter your password');
-        } else {
-            if (!/^(?=.*[a-z])/.test(password)) {
-                setPassworderr('The string must contain at least 1 lowercase alphabetical character');
-            } else if (!/^(?=.*[A-Z])/.test(password)) {
-                setPassworderr('The string must contain at least 1 upppercase alphabetical character');
-            } else if (!/^(?=.*[0-9])/.test(password)) {
-                setPassworderr('The string must contain at least 1 numeric character');
-            } else if (!/^(?=.*[!@#$%^&*])/.test(password)) {
-                setPassworderr('The string must contain at least one special character');
-            } else if (!/^(?=.{8,})/.test(password)) {
-                setPassworderr('The string must be eight characters or longer');
-            }
         }
+        // else {
+        //     if (!/^(?=.*[a-z])/.test(password)) {
+        //         setPassworderr('The string must contain at least 1 lowercase alphabetical character');
+        //     } else if (!/^(?=.*[A-Z])/.test(password)) {
+        //         setPassworderr('The string must contain at least 1 upppercase alphabetical character');
+        //     } else if (!/^(?=.*[0-9])/.test(password)) {
+        //         setPassworderr('The string must contain at least 1 numeric character');
+        //     } else if (!/^(?=.*[!@#$%^&*])/.test(password)) {
+        //         setPassworderr('The string must contain at least one special character');
+        //     } else if (!/^(?=.{8,})/.test(password)) {
+        //         setPassworderr('The string must be eight characters or longer');
+        //     }
+        // }
+
+        if (email && password && /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email)) {
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    toast.success('Login successfull');
+                    setTimeout(() => {
+                        navigate('/')
+                    }, 3000);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    console.log(errorCode);
+                });
+        }
+
+
+
     }
     return (
         <div className='flex w-full'>
 
             <div className='w-full md:w-1/2'>
                 <div className='flex justify-center ml-[20px] md:ml-[0px] mt-[60px] md:justify-end  md:mt-56 md:mr-[69px]'>
+                    <ToastContainer position="top-center" theme="dark" />
+
                     <div>
                         <h1 className='text-heading font-nunta font-bold text-[24px] md:text-4xl'>Login to your account!</h1>
-                        <div className='flex w-[220px] px-8 py-5 border-2 border-solid-[#BEBEBE] rounded-[8px] mt-8'>
-  
-                             <FcGoogle className='w-5 h-5'></FcGoogle>
+                        <div onClick={handleGgl} className='cursor-pointer flex w-[220px] px-8 py-5 border-2 border-solid-[#BEBEBE] rounded-[8px] mt-8'>
+
+                            <FcGoogle className='w-5 h-5'></FcGoogle>
                             <p className='text-center font-sans text-heading text-[13px] ml-[9px]'>Login with Google</p>
                         </div>
 
@@ -101,7 +142,7 @@ const Login = () => {
                             Login to Continue
                         </button>
                         <div>
-                            <p className='font-sans text-[#03014C] text-sm text-center mt-[15px] md:mr-[132px]  md:mt-[35px]'>Don’t have an account ?  <span className='text-[#EA6C00] font-semibold'>Sign up</span></p>
+                            <p className='font-sans text-[#03014C] text-sm text-center mt-[15px] md:mr-[132px]  md:mt-[35px]'>Don’t have an account ?  <Link to='/registar' className='text-[#EA6C00] font-semibold'>Sign up</Link></p>
                         </div>
                     </div>
                 </div>
